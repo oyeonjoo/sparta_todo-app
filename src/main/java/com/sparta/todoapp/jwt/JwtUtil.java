@@ -57,19 +57,18 @@ public class JwtUtil {
                         .compact();
     }
 
-    // JWT Cookie 에 저장
-    public void addJwtToCookie(String token, HttpServletResponse res) {
-        try {
-            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
+    // user 정보 반환
+    public String getSubject(String tokenValue) {
+        // token 확인 -> 순수 token
+        String token = substringToken(tokenValue);
 
-            Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
-            cookie.setPath("/");
-
-            // Response 객체에 Cookie 추가
-            res.addCookie(cookie);
-        } catch (UnsupportedEncodingException e) {
-            logger.error(e.getMessage());
+        // token 검증
+        if(!validateToken(token)) {
+            throw new IllegalArgumentException("검증되지 않은 유저입니다.");
         }
+
+        // 사용자 정보 가져오기
+        return getUserInfoFromToken(token);
     }
 
     // JWT 토큰 substring
@@ -99,8 +98,8 @@ public class JwtUtil {
     }
 
     // 토큰에서 사용자 정보 가져오기
-    public Claims getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    public String getUserInfoFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
     }
 
     // HttpServletRequest 에서 Cookie Value : JWT 가져오기
