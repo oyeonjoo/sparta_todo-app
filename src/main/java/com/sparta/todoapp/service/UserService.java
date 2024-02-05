@@ -1,7 +1,7 @@
 package com.sparta.todoapp.service;
 
-import com.sparta.todoapp.dto.SignInRequestDto;
-import com.sparta.todoapp.dto.SignUpRequestDto;
+import com.sparta.todoapp.dto.request.SignInRequestDto;
+import com.sparta.todoapp.dto.request.SignUpRequestDto;
 import com.sparta.todoapp.entity.User;
 import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.repository.UserRepository;

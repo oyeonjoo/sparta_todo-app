@@ -1,8 +1,8 @@
 package com.sparta.todoapp.service;
 
-import com.sparta.todoapp.dto.CreateTodoResponseDto;
-import com.sparta.todoapp.dto.TodoDto;
-import com.sparta.todoapp.dto.TodoRequestDto;
+import com.sparta.todoapp.dto.response.CreateTodoResponseDto;
+import com.sparta.todoapp.dto.response.TodoResponseDto;
+import com.sparta.todoapp.dto.request.TodoRequestDto;
 import com.sparta.todoapp.entity.Todo;
 import com.sparta.todoapp.entity.User;
 import com.sparta.todoapp.jwt.JwtUtil;
@@ -42,22 +42,22 @@ public class TodoService {
         return createTodoResponseDto;
     }
 
-    public List<TodoDto> getTodos() {
-        List<TodoDto> todos = todoRepository.findAllByOrderByCreatedAtDesc().stream().map(TodoDto::new).toList();
+    public List<TodoResponseDto> getTodos() {
+        List<TodoResponseDto> todos = todoRepository.findAllByOrderByCreatedAtDesc().stream().map(TodoResponseDto::new).toList();
 
         return todos;
     }
 
-    public TodoDto getTodo(Long id) {
+    public TodoResponseDto getTodo(Long id) {
         Todo todo = todoRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("선택한 일정이 존재하지 않습니다.")
         );
 
-        return new TodoDto(todo);
+        return new TodoResponseDto(todo);
     }
 
     @Transactional
-    public TodoDto updateTodo(String tokenValue, Long id, TodoRequestDto requestDto) {
+    public TodoResponseDto updateTodo(String tokenValue, Long id, TodoRequestDto requestDto) {
         // user 정보 반환(토큰 확인, 검증,user 정보 가져오기)
         String username = jwtUtil.getSubject(tokenValue);
 
@@ -74,6 +74,6 @@ public class TodoService {
 
         todo.update(requestDto);
 
-        return new TodoDto(todo);
+        return new TodoResponseDto(todo);
     }
 }

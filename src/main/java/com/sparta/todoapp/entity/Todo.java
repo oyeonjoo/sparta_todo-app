@@ -1,13 +1,9 @@
 package com.sparta.todoapp.entity;
 
-import com.sparta.todoapp.dto.TodoRequestDto;
+import com.sparta.todoapp.dto.request.TodoRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter

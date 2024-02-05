@@ -1,6 +1,5 @@
-package com.sparta.todoapp.dto;
+package com.sparta.todoapp.dto.response;
 
-import com.sparta.todoapp.entity.Todo;
 import lombok.Getter;
 
 @Getter

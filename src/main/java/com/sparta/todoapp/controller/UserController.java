@@ -1,7 +1,7 @@
 package com.sparta.todoapp.controller;
 
-import com.sparta.todoapp.dto.SignInRequestDto;
-import com.sparta.todoapp.dto.SignUpRequestDto;
+import com.sparta.todoapp.dto.request.SignInRequestDto;
+import com.sparta.todoapp.dto.request.SignUpRequestDto;
 import com.sparta.todoapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

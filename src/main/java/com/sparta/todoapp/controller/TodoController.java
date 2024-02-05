@@ -1,8 +1,8 @@
 package com.sparta.todoapp.controller;
 
-import com.sparta.todoapp.dto.CreateTodoResponseDto;
-import com.sparta.todoapp.dto.TodoDto;
-import com.sparta.todoapp.dto.TodoRequestDto;
+import com.sparta.todoapp.dto.response.CreateTodoResponseDto;
+import com.sparta.todoapp.dto.response.TodoResponseDto;
+import com.sparta.todoapp.dto.request.TodoRequestDto;
 import com.sparta.todoapp.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,17 +22,17 @@ public class TodoController {
     }
 
     @GetMapping("/inquire")
-    public List<TodoDto> getTodos() {
+    public List<TodoResponseDto> getTodos() {
         return todoService.getTodos();
     }
 
     @GetMapping("/inquire/{id}")
-    public TodoDto getTodo( @PathVariable Long id) {
+    public TodoResponseDto getTodo(@PathVariable Long id) {
         return todoService.getTodo(id);
     }
 
     @PutMapping("/update/{id}")
-    public TodoDto updateTodo(@RequestHeader(value = "Authorization") String token, @PathVariable Long id, @RequestBody TodoRequestDto requestDto) {
+    public TodoResponseDto updateTodo(@RequestHeader(value = "Authorization") String token, @PathVariable Long id, @RequestBody TodoRequestDto requestDto) {
         return todoService.updateTodo(token, id, requestDto);
     }
 }
