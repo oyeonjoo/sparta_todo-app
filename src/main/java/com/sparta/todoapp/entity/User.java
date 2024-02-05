@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @Table(name = "users")
@@ -21,10 +18,6 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-
-    @OneToMany
-    @JoinColumn(name = "username")
-    private List<Todo> TodoList = new ArrayList<>();
 
     public User(String username, String password) {
         this.username = username;
