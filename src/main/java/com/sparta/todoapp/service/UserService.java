@@ -1,7 +1,7 @@
 package com.sparta.todoapp.service;
 
-import com.sparta.todoapp.dto.LoginRequestDto;
-import com.sparta.todoapp.dto.SignupRequestDto;
+import com.sparta.todoapp.dto.SignInRequestDto;
+import com.sparta.todoapp.dto.SignUpRequestDto;
 import com.sparta.todoapp.entity.User;
 import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.repository.UserRepository;
@@ -18,7 +18,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public void signup(SignupRequestDto requestDto) {
+    public void signup(SignUpRequestDto requestDto) {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
 
@@ -33,7 +33,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public String login(LoginRequestDto requestDto) {
+    public String login(SignInRequestDto requestDto) {
         String username = requestDto.getUsername();
         String password = requestDto.getPassword();
 
