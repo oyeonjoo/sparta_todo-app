@@ -9,6 +9,4 @@ import java.util.Optional;
 
 public interface TodoRepository extends JpaRepository<Todo, Long> {
     List<Todo> findAllByOrderByCreatedAtDesc();
-
-    //List<Todo> findAllByUserId(Long id);
 }
