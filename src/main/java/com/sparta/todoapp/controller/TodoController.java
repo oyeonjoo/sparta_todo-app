@@ -31,6 +31,10 @@ public class TodoController {
         return todoService.getTodo(id);
     }
 
+    @PutMapping("/complete/{id}")
+    public String completeTodo(@RequestHeader(value = "Authorization") String token, @PathVariable Long id){
+        return todoService.completeTodo(token, id);
+    }
     @PutMapping("/update/{id}")
     public TodoResponseDto updateTodo(@RequestHeader(value = "Authorization") String token, @PathVariable Long id, @RequestBody TodoRequestDto requestDto) {
         return todoService.updateTodo(token, id, requestDto);

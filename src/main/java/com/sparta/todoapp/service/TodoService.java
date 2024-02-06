@@ -67,7 +67,6 @@ public class TodoService {
         );
 
         // 토큰 검사 후, 유효한 토큰이면 본인이 작성한 게시글 수정 가능
-
         if(!todo.getUser().getUsername().equals(username)) {
             throw new IllegalArgumentException("작성한 글만 수정 가능합니다.");
         }
@@ -75,5 +74,24 @@ public class TodoService {
         todo.update(requestDto);
 
         return new TodoResponseDto(todo);
+    }
+
+    public String completeTodo(String tokenValue, Long id) {
+        // user 정보 반환(토큰 확인, 검증,user 정보 가져오기)
+        String username = jwtUtil.getSubject(tokenValue);
+
+        // 해당 일정이 DB에 존재하는지 확인
+        Todo todo = todoRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("선택한 일정이 존재하지 않습니다.")
+        );
+
+        // 토큰 검사 후, 유효한 토큰이면 본인이 작성한 게시글 수정 가능
+        if(!todo.getUser().getUsername().equals(username)) {
+            throw new IllegalArgumentException("작성한 글만 수정 가능합니다.");
+        }
+
+        todo.updateCompleteStatus();
+
+        return "완료되었습니다";
     }
 }
