@@ -110,7 +110,8 @@
 <h3>📌  ERD</h3>
 
 
-put here
+![Todo-app_ERD](https://github.com/oyeonjoo/todo-app/assets/109337974/12d509c4-0189-4bbb-b424-3af474a8e9d0)
+
 
 
 
