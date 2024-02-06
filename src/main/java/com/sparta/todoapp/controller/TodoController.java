@@ -32,7 +32,7 @@ public class TodoController {
     }
 
     @PutMapping("/complete/{id}")
-    public String completeTodo(@RequestHeader(value = "Authorization") String token, @PathVariable Long id){
+    public String completeTodo(@RequestHeader(value = "Authorization") String token, @PathVariable Long id) {
         return todoService.completeTodo(token, id);
     }
     @PutMapping("/update/{id}")

@@ -76,6 +76,7 @@ public class TodoService {
         return new TodoResponseDto(todo);
     }
 
+    @Transactional
     public String completeTodo(String tokenValue, Long id) {
         // user 정보 반환(토큰 확인, 검증,user 정보 가져오기)
         String username = jwtUtil.getSubject(tokenValue);
