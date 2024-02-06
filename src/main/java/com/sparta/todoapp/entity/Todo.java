@@ -20,12 +20,17 @@ public class Todo extends Timestamped {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "isComplete")
+    private boolean isComplete;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
     public Todo(String title, String content, User user) {
         this.title = title;
         this.content = content;
+        this.isComplete = false;
         this.user = user;
     }
 
