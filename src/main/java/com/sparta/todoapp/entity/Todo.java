@@ -5,9 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @Table(name = "todos") // 매핑할 테이블의 이름을 지정
@@ -44,5 +41,9 @@ public class Todo extends Timestamped {
 
     public void updateCompleteStatus() {
         this.isComplete = true;
+    }
+
+    public boolean isNotUsernameMatch(String username) {
+        return this.user.isNotUsernameMatch(username);
     }
 }

@@ -4,6 +4,8 @@ import com.sparta.todoapp.dto.request.CommentRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +19,6 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", nullable = false)
-    private String username;
-
     @Column(name = "content", nullable = false)
     private String content;
 
@@ -29,17 +28,24 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "todo_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Todo todo;
 
-    public Comment(Todo todo, String username, String content, User user) {
+    public Comment(Todo todo, String content, User user) {
         this.todo = todo;
-        this.username = username;
         this.content = content;
         this.user = user;
     }
 
     public void update(CommentRequestDto requestDto) {
-        this.username = requestDto.getUsername();
         this.content = requestDto.getContent();
+    }
+
+    public boolean isNotUserMatch(User user) {
+        return !this.user.equals(user);
+    }
+
+    public boolean isNotTodoMatch(Todo todo) {
+        return !this.todo.equals(todo);
     }
 }

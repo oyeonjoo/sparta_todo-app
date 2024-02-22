@@ -10,8 +10,11 @@ import com.sparta.todoapp.repository.CommentRepository;
 import com.sparta.todoapp.repository.TodoRepository;
 import com.sparta.todoapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -27,25 +30,20 @@ public class CommentService {
         String username = jwtUtil.getSubject(tokenValue);
 
         // 해당 user 찾기
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("해당 유저가 없습니다.")
-        );
+        User user = findUserBy(username);
 
         // 해당 일정이 DB에 존재하는지 확인
-        Todo todo = todoRepository.findById(todoId).orElseThrow(
-                () -> new IllegalArgumentException("선택한 일정이 존재하지 않습니다.")
-        );
+        Todo todo = findTodoBy(todoId);
 
         // RequestDto -> Entity
-        Comment comment = new Comment(todo, requestDto.getUsername(), requestDto.getContent(), user);
+        Comment comment = new Comment(todo, requestDto.getContent(), user);
 
         // DB 저장
         Comment saveComment = commentRepository.save(comment);
 
         // Entity -> ResponseDto
-        CommentResponseDto commentResponseDto = new CommentResponseDto(username, saveComment.getContent());
 
-        return commentResponseDto;
+        return new CommentResponseDto(username, saveComment.getContent());
     }
 
     @Transactional
@@ -54,29 +52,19 @@ public class CommentService {
         String username = jwtUtil.getSubject(tokenValue);
 
         // 해당 user 찾기
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("해당 유저가 없습니다.")
-        );
+        User user = findUserBy(username);
 
         // 해당 일정이 DB에 존재하는지 확인
-        Todo todo = todoRepository.findById(todoId).orElseThrow(
-                () -> new IllegalArgumentException("선택한 일정이 존재하지 않습니다.")
-        );
+        Todo todo = findTodoBy(todoId);
 
         // 해당 댓글이 DB에 존재하는지 확인
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new IllegalArgumentException("선택한 댓글이 존재하지 않습니다.")
-        );
+        Comment comment = findCommentBy(commentId);
 
         // todo 에 해당 댓글이 존재하는지 확인
-        if (!todo.equals(comment.getTodo())) {
-            throw new IllegalArgumentException("게시글에 댓글이 존재하지 않습니다.");
-        }
+        commentExist(todo, comment);
 
         // 작성한 댓글이 일치하는지 확인
-        if (!comment.getUser().equals(user)) {
-            throw new IllegalArgumentException("작성한 댓글만 수정 가능합니다.");
-        }
+        userMatchValidate(comment, user);
 
         comment.update(requestDto);
 
@@ -88,32 +76,52 @@ public class CommentService {
         String username = jwtUtil.getSubject(tokenValue);
 
         // 해당 user 찾기
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("해당 유저가 없습니다.")
-        );
+        User user = findUserBy(username);
 
         // 해당 일정이 DB에 존재하는지 확인
-        Todo todo = todoRepository.findById(todoId).orElseThrow(
-                () -> new IllegalArgumentException("선택한 일정이 존재하지 않습니다.")
-        );
+        Todo todo = findTodoBy(todoId);
 
         // 해당 댓글이 DB에 존재하는지 확인
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new IllegalArgumentException("선택한 댓글이 존재하지 않습니다.")
-        );
+        Comment comment = findCommentBy(commentId);
 
         // todo 에 해당 댓글이 존재하는지 확인
-        if (!todo.equals(comment.getTodo())) {
-            throw new IllegalArgumentException("게시글에 댓글이 존재하지 않습니다.");
-        }
+        commentExist(todo, comment);
 
         // 작성한 댓글이 일치하는지 확인
-        if (!comment.getUser().equals(user)) {
-            throw new IllegalArgumentException("작성한 댓글만 수정 가능합니다.");
-        }
+        userMatchValidate(comment, user);
 
         commentRepository.delete(comment);
 
         return "삭제 성공!";
+    }
+
+    private User findUserBy(String username) {
+        return userRepository.findByUsername(username).orElseThrow(
+                () -> new NoSuchElementException("해당 유저가 없습니다.")
+        );
+    }
+
+    private Todo findTodoBy(Long todoId) {
+        return todoRepository.findById(todoId).orElseThrow(
+                () -> new NoSuchElementException("선택한 일정이 존재하지 않습니다.")
+        );
+    }
+
+    private Comment findCommentBy(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(
+                () -> new NoSuchElementException("선택한 댓글이 존재하지 않습니다.")
+        );
+    }
+
+    private void commentExist(Todo todo, Comment comment) {
+        if (comment.isNotTodoMatch(todo)) {
+            throw new NoSuchElementException("게시글에 댓글이 존재하지 않습니다.");
+        }
+    }
+
+    private void userMatchValidate(Comment comment, User user) {
+        if (comment.isNotUserMatch(user)) {
+            throw new AccessDeniedException("작성한 댓글만 수정 가능합니다.");
+        }
     }
 }

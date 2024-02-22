@@ -3,6 +3,7 @@ package com.sparta.todoapp.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
@@ -22,5 +23,13 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    public boolean isNotUsernameMatch(String username) {
+        return !username.equals(this.username);
+    }
+
+    public boolean isNotPasswordMatch(String password, PasswordEncoder passwordEncoder) {
+        return !passwordEncoder.matches(password, this.password);
     }
 }
