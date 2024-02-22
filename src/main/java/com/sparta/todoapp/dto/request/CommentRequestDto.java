@@ -1,14 +1,14 @@
 package com.sparta.todoapp.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
 public class CommentRequestDto {
-    private String username;
+    @NotBlank(message = "내용을 필수로 입력해야 합니다.")
     private String content;
 
-    public CommentRequestDto(String username, String content) {
-        this.username = username;
+    public CommentRequestDto(String content) {
         this.content = content;
     }
 }
