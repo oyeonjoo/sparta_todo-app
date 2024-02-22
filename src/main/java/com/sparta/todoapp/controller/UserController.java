@@ -2,6 +2,7 @@ package com.sparta.todoapp.controller;
 
 import com.sparta.todoapp.dto.request.SignInRequestDto;
 import com.sparta.todoapp.dto.request.SignUpRequestDto;
+import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,6 @@ public class UserController {
     @PostMapping("/sign-in")
     public ResponseEntity<String> login(@RequestBody SignInRequestDto requestDto) {
 
-        return ResponseEntity.ok().header("Authorization", userService.login(requestDto)).body("로그인 성공");
+        return ResponseEntity.ok().header(JwtUtil.AUTHORIZATION_HEADER, userService.login(requestDto)).body("로그인 성공");
     }
 }

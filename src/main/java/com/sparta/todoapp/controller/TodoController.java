@@ -3,6 +3,7 @@ package com.sparta.todoapp.controller;
 import com.sparta.todoapp.dto.response.CreateTodoResponseDto;
 import com.sparta.todoapp.dto.response.TodoResponseDto;
 import com.sparta.todoapp.dto.request.TodoRequestDto;
+import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -26,17 +27,17 @@ public class TodoController {
         return todoService.getTodos();
     }
 
-    @GetMapping("/inquire/{id}")
+    @GetMapping("/{id}/inquire")
     public TodoResponseDto getTodo(@PathVariable Long id) {
         return todoService.getTodo(id);
     }
 
-    @PutMapping("/complete/{id}")
-    public String completeTodo(@RequestHeader(value = "Authorization") String token, @PathVariable Long id) {
+    @PutMapping("/{id}/complete")
+    public String completeTodo(@RequestHeader(value = JwtUtil.AUTHORIZATION_HEADER) String token, @PathVariable Long id) {
         return todoService.completeTodo(token, id);
     }
-    @PutMapping("/update/{id}")
-    public TodoResponseDto updateTodo(@RequestHeader(value = "Authorization") String token, @PathVariable Long id, @RequestBody TodoRequestDto requestDto) {
+    @PutMapping("/{id}/update")
+    public TodoResponseDto updateTodo(@RequestHeader(value = JwtUtil.AUTHORIZATION_HEADER) String token, @PathVariable Long id, @RequestBody TodoRequestDto requestDto) {
         return todoService.updateTodo(token, id, requestDto);
     }
 }
