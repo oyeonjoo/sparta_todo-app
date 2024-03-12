@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
+
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignUpRequestDto requestDto) {
         userService.signup(requestDto);
@@ -26,6 +28,8 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody SignInRequestDto requestDto) {
 
-        return ResponseEntity.ok().header(JwtUtil.AUTHORIZATION_HEADER, userService.login(requestDto)).body("로그인 성공");
+        return ResponseEntity.ok()
+            .header(JwtUtil.AUTHORIZATION_HEADER, userService.login(requestDto))
+            .body("로그인 성공");
     }
 }
