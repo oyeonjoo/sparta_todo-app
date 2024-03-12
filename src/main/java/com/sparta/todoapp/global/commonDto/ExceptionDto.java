@@ -1,4 +1,4 @@
-package com.sparta.todoapp.exception;
+package com.sparta.todoapp.global.commonDto;
 
 
 import lombok.Builder;

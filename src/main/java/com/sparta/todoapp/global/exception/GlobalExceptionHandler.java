@@ -1,5 +1,6 @@
-package com.sparta.todoapp.exception;
+package com.sparta.todoapp.global.exception;
 
+import com.sparta.todoapp.global.commonDto.ExceptionDto;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
