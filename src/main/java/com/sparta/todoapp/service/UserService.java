@@ -3,20 +3,20 @@ package com.sparta.todoapp.service;
 import com.sparta.todoapp.dto.request.SignInRequestDto;
 import com.sparta.todoapp.dto.request.SignUpRequestDto;
 import com.sparta.todoapp.entity.User;
-import com.sparta.todoapp.jwt.JwtUtil;
+import com.sparta.todoapp.global.jwt.JwtUtil;
 import com.sparta.todoapp.repository.UserRepository;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
@@ -41,19 +41,17 @@ public class UserService {
         String username = requestDto.getUsername();
         String password = requestDto.getPassword();
 
-        // 사용자 확인
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new NoSuchElementException("등록된 사용자가 없습니다.")
+            () -> new NoSuchElementException("등록된 사용자가 없습니다.")
         );
 
-        // 비밀번호 확인
         passwordMatchValidate(password, user);
 
         return jwtUtil.createToken(username);
     }
 
     private void passwordMatchValidate(String password, User user) {
-        if(user.isNotPasswordMatch(password, passwordEncoder)) {
+        if (user.isNotPasswordMatch(password, passwordEncoder)) {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
     }
