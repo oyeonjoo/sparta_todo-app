@@ -1,7 +1,8 @@
 package com.sparta.todoapp.controller;
 
-import com.sparta.todoapp.dto.response.CreateTodoResponseDto;
 import com.sparta.todoapp.dto.response.TodoResponseDto;
+import com.sparta.todoapp.dto.response.CreateTodoResponseDto;
+import com.sparta.todoapp.dto.response.TodoDetailResponseDto;
 import com.sparta.todoapp.dto.request.TodoRequestDto;
 import com.sparta.todoapp.global.commonDto.ResponseDto;
 import com.sparta.todoapp.global.jwt.JwtUtil;
@@ -44,10 +45,10 @@ public class TodoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDto<TodoResponseDto>> getTodo(@PathVariable Long id) {
+    public ResponseEntity<ResponseDto<TodoDetailResponseDto>> getTodo(@PathVariable Long id) {
 
         return ResponseEntity.ok()
-            .body(ResponseDto.<TodoResponseDto>builder()
+            .body(ResponseDto.<TodoDetailResponseDto>builder()
                 .data(todoService.getTodo(id))
                 .build());
     }
