@@ -5,7 +5,8 @@ import com.sparta.todoapp.dto.response.CommentResponseDto;
 import com.sparta.todoapp.entity.Comment;
 import com.sparta.todoapp.entity.Todo;
 import com.sparta.todoapp.entity.User;
-import com.sparta.todoapp.global.jwt.JwtUtil;
+import com.sparta.todoapp.global.exception.custom.CommentNotFoundException;
+import com.sparta.todoapp.global.exception.custom.TodoNotFoundException;
 import com.sparta.todoapp.repository.CommentRepository;
 import com.sparta.todoapp.repository.TodoRepository;
 import com.sparta.todoapp.repository.UserRepository;
@@ -24,12 +25,10 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final TodoRepository todoRepository;
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
 
 
-    public CommentResponseDto createComment(String tokenValue, Long todoId,
+    public CommentResponseDto createComment(String username, Long todoId,
         CommentRequestDto requestDto) {
-        String username = jwtUtil.getSubject(tokenValue);
 
         User user = findUserBy(username);
 
@@ -42,9 +41,8 @@ public class CommentService {
         return new CommentResponseDto(username, saveComment.getContent());
     }
 
-    public CommentResponseDto updateComment(String tokenValue, Long todoId, Long commentId,
+    public CommentResponseDto updateComment(String username, Long todoId, Long commentId,
         CommentRequestDto requestDto) {
-        String username = jwtUtil.getSubject(tokenValue);
 
         User user = findUserBy(username);
 
@@ -61,8 +59,7 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
-    public String deleteComment(String tokenValue, Long todoId, Long commentId) {
-        String username = jwtUtil.getSubject(tokenValue);
+    public String deleteComment(String username, Long todoId, Long commentId) {
 
         User user = findUserBy(username);
 
@@ -87,19 +84,19 @@ public class CommentService {
 
     private Todo findTodoBy(Long todoId) {
         return todoRepository.findById(todoId).orElseThrow(
-            () -> new NoSuchElementException("선택한 일정이 존재하지 않습니다.")
+            () -> new TodoNotFoundException("선택한 일정이 존재하지 않습니다.")
         );
     }
 
     private Comment findCommentBy(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(
-            () -> new NoSuchElementException("선택한 댓글이 존재하지 않습니다.")
+            () -> new CommentNotFoundException("선택한 댓글이 존재하지 않습니다.")
         );
     }
 
     private void commentExist(Todo todo, Comment comment) {
         if (comment.isNotTodoMatch(todo)) {
-            throw new NoSuchElementException("게시글에 댓글이 존재하지 않습니다.");
+            throw new NoSuchElementException("일정에 댓글이 존재하지 않습니다.");
         }
     }
 
