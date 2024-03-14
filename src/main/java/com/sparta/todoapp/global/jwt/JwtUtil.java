@@ -3,6 +3,10 @@ package com.sparta.todoapp.global.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.HashSet;
+import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,21 +17,19 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
+@Slf4j(topic = "JwtUtil")
 @Component
 public class JwtUtil {
-    // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    // Token 식별자
+//    public static final String AUTHORIZATION_KEY = "auth";
     public static final String BEARER_PREFIX = "Bearer ";
-    // 토큰 만료시간
-    private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
+    private static final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
     private Key key;
+    private final Set<String> tokenBlackList = new HashSet<>();
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-
-    // 로그 설정
     public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
 
     @PostConstruct
@@ -36,34 +38,39 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // 토큰 생성
     public String createToken(String username) {
         Date date = new Date();
 
         return BEARER_PREFIX +
-                Jwts.builder()
-                        .setSubject(username) // 사용자 식별자값(ID)
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
-                        .setIssuedAt(date) // 발급일
-                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
-                        .compact();
+            Jwts.builder()
+                .setSubject(username)
+                .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+                .setIssuedAt(date)
+                .signWith(key, signatureAlgorithm)
+                .compact();
     }
 
-    // user 정보 반환
-    public String getSubject(String tokenValue) {
-        // token 확인 -> 순수 token
-        String token = substringToken(tokenValue);
-
-        // token 검증
-        if(!validateToken(token)) {
-            throw new IllegalArgumentException("검증되지 않은 유저입니다.");
+    public String getJwtFromHeader(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(7);
         }
-
-        // 사용자 정보 가져오기
-        return getUserInfoFromToken(token);
+        return null;
     }
+    // user 정보 반환
+//    public String getSubject(String tokenValue) {
+//        // token 확인 -> 순수 token
+//        String token = substringToken(tokenValue);
+//
+//        // token 검증
+//        if(!validateToken(token)) {
+//            throw new IllegalArgumentException("검증되지 않은 유저입니다.");
+//        }
+//
+//        // 사용자 정보 가져오기
+//        return getUserInfoFromToken(token);
+//    }
 
-    // JWT 토큰 substring
     public String substringToken(String tokenValue) {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
@@ -72,8 +79,12 @@ public class JwtUtil {
         throw new NullPointerException("Not Found Token");
     }
 
-    // 토큰 검증
     public boolean validateToken(String token) {
+
+        if(tokenBlackList.contains(token)) {
+            return false;
+        }
+
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
@@ -89,8 +100,15 @@ public class JwtUtil {
         return false;
     }
 
-    // 토큰에서 사용자 정보 가져오기
-    public String getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+//    public String getUserInfoFromToken(String token) {
+//        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+//    }
+
+    public Claims getUserInfoFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
+    public void invalidateToken(String token) {
+        tokenBlackList.add(token);
     }
 }
