@@ -27,6 +27,7 @@ public class TodoService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
+    @Transactional
     public CreateTodoResponseDto createTodos(String username, TodoRequestDto requestDto) {
 
         User user = userRepository.findByUsername(username).orElseThrow(
@@ -61,8 +62,8 @@ public class TodoService {
     }
 
     @Transactional
-    public TodoResponseDto updateTodo(String tokenValue, Long id, TodoRequestDto requestDto) {
-        Todo todo = findTodo(tokenValue, id);
+    public TodoResponseDto updateTodo(String username, Long id, TodoRequestDto requestDto) {
+        Todo todo = findTodo(username, id);
 
         todo.update(requestDto);
 
@@ -70,8 +71,8 @@ public class TodoService {
     }
 
     @Transactional
-    public String completeTodo(String tokenValue, Long id) {
-        Todo todo = findTodo(tokenValue, id);
+    public String completeTodo(String username, Long id) {
+        Todo todo = findTodo(username, id);
 
         todo.updateCompleteStatus();
 
