@@ -111,8 +111,8 @@
 
 
 
-![todo-app-erd_수정](https://github.com/oyeonjoo/sparta_todo-app/assets/109337974/75f64f34-0112-4039-917a-43d486cf827b)
 
+![todo-app-erd-수정](https://github.com/oyeonjoo/sparta_todo-app/assets/109337974/aeda5cf7-0d8e-42fb-b37a-61accee90cc8)
 
 
 
