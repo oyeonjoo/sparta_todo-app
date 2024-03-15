@@ -110,8 +110,8 @@
 <h3>📌  ERD</h3>
 
 
-![todo-app-erd_수정](https://github.com/oyeonjoo/sparta_todo-app/assets/109337974/2283ed78-6950-4719-8cd9-ca6dec6abcf4)
 
+![todo-app-erd_수정](https://github.com/oyeonjoo/sparta_todo-app/assets/109337974/75f64f34-0112-4039-917a-43d486cf827b)
 
 
 
